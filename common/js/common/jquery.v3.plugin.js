@@ -219,7 +219,7 @@
 })(jQuery);
 
 /* sliderFade
- * verson 0.0.1 --04.23
+ * verson 0.0.2 --04.28
  * 标准轮播(箭头+圆点+渐隐)
  * 1.内容+箭头 (首页楼层里的图片banner)
  * 2.内容+箭头+圆点 (cj special)
@@ -240,8 +240,8 @@
             MainGiftArrs: null,                                  //箭头
             MainGifts: null,                                     //被切换的元素
             MainGiftIndex: 0,                                    //初始状态显示的元素,一般都是0
-            ifAutoPlay: null,                                    //是否自动播放
-            ifDots: false,                                        //是否需要圆点
+            ifAutoPlay: false,                                   //是否自动播放
+            ifDots: false,                                       //是否需要圆点
             playTime:6000,                                       //自动切换时间
             dotsBox: '.dots',                                    //放置圆点的盒子(如果有圆点)
             arrNext: '.g-arr-next',                              //右箭头
@@ -289,10 +289,11 @@
 
         if(options.ifAutoPlay){
             options.autoPlay = setInterval(function(){
-                options.arrPrev.click();
+                options.arrNext.click();
             },options.playTime);
             options.MainGift.hover(function(){
                 clearInterval(options.autoPlay);
+                options.autoPlay = null
             },function(){
                 options.autoPlay = setInterval(function(){
                     options.arrNext.click();
@@ -304,11 +305,13 @@
             var indexShow = options.MainGiftIndex==options.length ? 0: options.MainGiftIndex+1;
             slider.MainGiftShow(indexShow);
             options.MainGiftIndex = options.MainGiftIndex==options.length ? 0: options.MainGiftIndex+1;
+            return false
         });
         options.arrPrev.click(function(){
             var indexShow = options.MainGiftIndex==0 ? options.length: options.MainGiftIndex-1;
             slider.MainGiftShow(indexShow);
             options.MainGiftIndex = options.MainGiftIndex==0 ? options.length: options.MainGiftIndex-1;
+            return false
         });
 
         if(options.dots) {
@@ -580,175 +583,13 @@
     }
 })(jQuery);
 
-/* closeNode
- * verson 0.0.1 --04.25
- * 关闭某元素 (顶通banner)
- * */
-(function ($) {
-    $.fn.closeNode = function (opts) {
-        this.each(function () {
-            init.call(this, opts);
-        });
 
-        return this;
-    };
 
-    function init(opts) {
-        var defaultOption = {
-            closeBtn:'.close',                       //关闭按钮
-            closeContent:null,                       //需要被关闭的内容,如果不定义,就是调用插件的元素本身
-            closeWay:'hide'                          //被关闭的方式,hide,fade,up
-        };
 
-        var options = $.extend(defaultOption, opts);
-        options.closeBtn = $(this).find(options.closeBtn);
-        options.closeContent = options.closeContent ? $(this).find(options.closeContent) : $(this);
 
-        var closeNodeFuns = {};
 
-        closeNodeFuns.close = function(way){
-            switch(way){
-                case 'hide':
-                    this.closeContent.hide();
-                    break;
-                case 'fade':
-                    this.closeContent.fadeOut();
-                    break;
-                case 'up':
-                    this.closeContent.animate({'height':0,'opacity':0},300,'',function(){$(this).hide()});
-                    break;
-                default:
-                    this.closeContent.hide();
-            }
-        };
 
-        options.closeBtn.bind('click', closeNodeFuns.close.bind(options,options.closeWay));
-    }
-})(jQuery);
 
-/* closeNode
- * verson 0.0.1 --04.25
- * 关闭某元素 (顶通banner)
- * */
-(function ($) {
-    $.fn.closeNode = function (opts) {
-        this.each(function () {
-            init.call(this, opts);
-        });
-
-        return this;
-    };
-
-    function init(opts) {
-        var defaultOption = {
-            closeBtn:'.close',                       //关闭按钮
-            closeContent:null,                       //需要被关闭的内容,如果不定义,就是调用插件的元素本身
-            closeWay:'hide'                          //被关闭的方式,hide,fade,up
-        };
-
-        var options = $.extend(defaultOption, opts);
-        options.closeBtn = $(this).find(options.closeBtn);
-        options.closeContent = options.closeContent ? $(this).find(options.closeContent) : $(this);
-
-        var closeNodeFuns = {};
-
-        closeNodeFuns.close = function(way){
-            switch(way){
-                case 'hide':
-                    this.closeContent.hide();
-                    break;
-                case 'fade':
-                    this.closeContent.fadeOut();
-                    break;
-                case 'up':
-                    this.closeContent.animate({'height':0,'opacity':0},300,'',function(){$(this).hide()});
-                    break;
-                default:
-                    this.closeContent.hide();
-            }
-        };
-
-        options.closeBtn.bind('click', closeNodeFuns.close.bind(options,options.closeWay));
-    }
-})(jQuery);
-
-/* scrollFix
- * verson 0.0.1 --04.25
- * 保持某块元素置顶 (公共右侧二维码客服)
- * */
-(function ($) {
-    $.fn.scrollFix = function (opts) {
-        this.each(function () {
-            init.call(this, opts);
-        });
-
-        return this;
-    };
-
-    function init(opts) {
-        var defaultOption = {
-            ele:$(this),                       //需要被固定的元素
-            extra:0                            //距离该元素多少距离的时候开始定位
-        };
-
-        var options = $.extend(defaultOption, opts);
-
-        options.boundaries = $(this).offset().top;
-
-        var scrollFixFuns = {};
-
-        scrollFixFuns.scroll = function(extra){
-            if($(window).scrollTop()+extra >= this.boundaries){
-                this.ele.addClass('fixed')
-            }
-            else {
-                this.ele.removeClass('fixed')
-            }
-        };
-
-        $(window).bind('scroll',  scrollFixFuns.scroll.bind(options,options.extra));
-    }
-})(jQuery);
-
-/* defValue
- * verson 0.0.1 --04.25
- * 文本域默认显示文本 (公共头部搜索条)
- * */
-(function ($) {
-    $.fn.defValue = function (opts) {
-        this.each(function () {
-            init.call(this, opts);
-        });
-
-        return this;
-    };
-
-    function init(opts) {
-        var defaultOption = {
-            inputText:$(this),
-            ifFocus:false                                   //是否打开的时候就获得焦点
-        };
-
-        var options = $.extend(defaultOption, opts);
-        options.defaultVal = $(this).val();
-
-        var defValueFuns = {};
-
-        defValueFuns.setValue = function(){
-            this.inputText[0].value = this.inputText.val() == options.defaultVal ? '' : this.inputText.val();
-        };
-        defValueFuns.clearValue = function(){
-            this.inputText[0].value = this.inputText.val() == '' ? options.defaultVal : this.inputText.val();
-        };
-
-        $(this).bind('focus',  defValueFuns.setValue.bind(options));
-        $(this).bind('blur',  defValueFuns.clearValue.bind(options));
-
-        if(options.ifFocus){
-            $(this).focus();
-        }
-    }
-})(jQuery);
 
 
 

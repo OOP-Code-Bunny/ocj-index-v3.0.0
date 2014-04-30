@@ -281,11 +281,17 @@ DIV.g-arr-next:hover {
 .g-header-main .g-main-logo {
     display:block; float:left; width:153px; height:58px; padding:30px 18px
 }
+.g-header-main .g-main-logo img {
+    width:153px; height:58px
+}
 .g-logo-slider {
     width:210px;height:70px;overflow:hidden;position:relative; float:left; margin:24px 0 0 32px
 }
 .g-logo-slider .slider-item {
     display:block;width:210px;height:70px;position:absolute;
+}
+.g-logo-slider img {
+    width:210px; height:70px
 }
 .g-search-box {
     width:490px; height:80px; padding:38px 0 0 41px; float:left
@@ -456,7 +462,6 @@ DIV.g-arr-next:hover {
 .g-settleup-content a.go-cart {
     display:block; float:right; width:98px; height:28px; line-height:28px; color:#505966; text-align:center; border:1px solid #c4c3c9; -moz-box-shadow: 0 1px 1px #ececec; -webkit-box-shadow: 0 1px 1px #ececec; box-shadow: 0 1px 1px #ececec; font-weight:bold; background:#fff
 }
-
 /*头部中间主要部分 end*/
 
 

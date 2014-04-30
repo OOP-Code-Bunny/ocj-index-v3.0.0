@@ -1257,7 +1257,7 @@
     width: 490px; overflow: hidden; height: 210px; position:relative; -webkit-backface-visibility: hidden;
 }
 .index-row-5 .guess .ocj-slide .market-slide-content div.box {
-    position: absolute; overflow: hidden; width: 2295px; -webkit-transition: 0.8s; transition: 0.8s; -webkit-transform: translate3d(0, 0, 0); left: 0
+    position: absolute; overflow: hidden; width: 3395px; -webkit-transition: 0.8s; transition: 0.8s; -webkit-transform: translate3d(0, 0, 0); left: 0
 }
 .index-row-5 .guess .ocj-slide .market-slide-content .market-slide-pannel {
     float: left; width: 490px; height: 210px; display: block; overflow: hidden;
