@@ -21,7 +21,7 @@ DIV.g-arr-next:hover {
 }
 
 .g-site-nav {
-    width:100%; background:#f6f6f6; height:32px; border-bottom:1px solid #d9d9d7; position:relative; z-index:5
+    width:100%; background:#f6f6f6; height:32px; border-bottom:1px solid #d9d9d7; position:relative; z-index:6
 }
 .g-container-1190 {
     width: 1190px; margin:auto
@@ -297,7 +297,7 @@ DIV.g-arr-next:hover {
     width:490px; height:80px; padding:38px 0 0 41px; float:left
 }
 .g-search-box .search-bar {
-    width:484px; height:34px; border:3px solid #239cdc
+    width:484px; height:34px; border:3px solid #239cdc; position:relative; z-index:5
 }
 .g-search-box .search-bar input {
     float:left; width:407px; height:34px; line-height:34px; text-indent:8px; border:0; color:#9da6ab
@@ -305,6 +305,100 @@ DIV.g-arr-next:hover {
 .g-search-box .search-bar button {
     float:left; background:#239cdc; width:77px; height:34px; border:0; color:#fff; font-size:14px; line-height:32px; font-weight:bold; text-align:center; font-family: 'Microsoft YaHei'; cursor:pointer
 }
+.g-search-box .search-bar .relation-search {
+    position:absolute; top:37px; left:-3px; width:488px; border:1px solid #239cdc; height:338px; background:#fff; overflow:hidden; display:none
+}
+.g-search-box .search-bar .relation-search .fl-keywords {
+    float:left; height:338px
+}
+.g-search-box .search-bar .relation-search .fl-keywords ul li {
+    height:32px; width:208px; line-height:32px; *height:30px
+}
+.g-search-box .search-bar .relation-search .fl-keywords ul li.cur {
+    background:#fafafa;
+}
+.g-search-box .search-bar .relation-search .fl-keywords ul li.no.cur {
+    width:488px
+}
+.g-search-box .search-bar .relation-search .fl-keywords ul li.cur span.arr {
+    float:right; margin-right:5px; background-position:0 -15px
+}
+.g-search-box .search-bar .relation-search .fl-keywords ul li a {
+    display:block; width:100%; height:100%; text-indent:14px; color:#4f5d64; font-family: 'Microsoft YaHei';
+}
+.g-search-box .search-bar .relation-search .fl-keywords ul li span.text {
+    float:left; margin-right:10px
+}
+.g-search-box .search-bar .relation-search .fl-keywords ul li span.arr {
+    float:left; display:block; width:5px; height:32px; background:url(../images/common/bg.arr.search.png) 0 11px no-repeat;
+}
+.g-search-box .search-bar .relation-search .fr-relation {
+    width:auto; height:338px; overflow:hidden; background:#fafafa; font-family: 'Microsoft YaHei'; border-left:1px solid #ececec
+}
+.g-search-box .search-bar .relation-search .fr-relation .relation-content {
+    display:none
+}
+.g-search-box .search-bar .relation-search .fr-relation .logo {
+    height:82px; width:255px; margin:auto; padding-top:11px; border-bottom:1px dotted #b4b4b4; text-align:center; color:#4f5d64
+}
+.g-search-box .search-bar .relation-search .fr-relation .logo a.pic {
+    display:block; width:160px; height:55px; border:1px solid #eeeeee; margin:0 auto 4px; background:#fff; position:relative
+}
+.g-search-box .search-bar .relation-search .fr-relation .logo img {
+    display:block; width:160px; height:55px; position:absolute
+}
+.g-search-box .search-bar .relation-search .fr-relation .result {
+    border-bottom:1px dotted #b4b4b4; height:135px; width:255px; margin:auto; color:#4f5d64
+}
+.g-search-box .search-bar .relation-search .fr-relation .result h3 {
+    height:32px; line-height:32px; font-weight:normal; font-size:14px; margin-left:7px
+}
+.g-search-box .search-bar .relation-search .fr-relation .result h3 b {
+    margin:0 3px
+}
+.g-search-box .search-bar .relation-search .fr-relation .result ul {
+    height:25px; overflow:hidden;
+}
+.g-search-box .search-bar .relation-search .fr-relation .result ul li {
+    height:25px; float:left; margin-left:7px; min-width:62px
+}
+.g-search-box .search-bar .relation-search .fr-relation .result ul li a {
+    display:block; padding:0 6px; height:23px; line-height:23px; background:#fff; border:1px solid #cfcfcf; color:#4f5d64; text-align:center
+}
+.g-search-box .search-bar .relation-search .fr-relation .result ul li a:hover {
+    text-decoration:none; color:#fff; border-color:#239cdc; background:#239cdc
+}
+.g-search-box .search-bar .relation-search .fr-relation .result .h-6 {
+    height:6px
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing {
+    width:255px; margin:auto; color:#4f5d64
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing h3 {
+    height:32px; line-height:32px; font-weight:normal; font-size:14px; margin-left:7px; margin-bottom:4px
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing h3 b {
+    margin:0 3px 0 0
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing p {
+    margin:0; padding:2px 0; height:auto; overflow:hidden
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing p a {
+    float:left; width:207px; color:#4f5d64
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing p a:hover {
+    color:#239cdc
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing p s {
+    float:left; height:100%; display:block; width:10px; margin-left:12px; padding-top:6px;
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing p s b {
+    display:block; width:4px; height:4px; border-radius:100%; background:#cacaca
+}
+.g-search-box .search-bar .relation-search .fr-relation .brand-ing p img {
+    display:inline-block; margin-left:3px; vertical-align:-2px
+}
+
 .g-search-box .search-down {
     height:40px; width:490px;
 }
@@ -372,7 +466,7 @@ DIV.g-arr-next:hover {
     color:#b5b5b5; font-size:18px; margin-left:5px; vertical-align:-4px;
 }
 .g-header-mycart dt .shopping {
-    position: absolute; display:block; width:26px; height:24px; line-height:16px; top: -8px; left: 24px; background:url(../images/common/bg.site.nav.png) -9px -470px no-repeat;;  color: #fff; text-align:center
+    position: absolute; display:block; width:26px; height:24px; line-height:16px; top: -8px; left: 24px; background:url(../images/common/bg.site.nav.png) -9px -470px no-repeat;  color: #fff; text-align:center
 }
 .g-header-mycart dd {
     position: absolute; top: 42px; right: -2px; width: 308px; background:#fff; display:none; -moz-box-shadow: 0 0 10px rgba(0,0,0,.12); -webkit-box-shadow: 0 0 10px rgba(0,0,0,.12); box-shadow: 0 0 10px rgba(0,0,0,.12); border:1px solid #d9d9d9

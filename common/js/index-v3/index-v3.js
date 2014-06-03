@@ -39,6 +39,14 @@ $(function(){
 
     var sliderBanner2 = $('.ocj-slide').sliderTpl({btnUlClass:'market-slide-nav',btnCurClass:'market-nav-selected',ifArr:true, ifBtns:false, arrClassCommon:'', silderContent:'.market-slide-pannel'});
 
+    $('.hio-6').find('img.adaptive').imgAdaptive({parentWidth:200,parentHeight:200});
+
+    $('.tv-content').find('img.adaptive').imgAdaptive();
+
+    $('.index-row-3').find('img.adaptive').imgAdaptive();
+
+    $('.index-row-5').find('img.adaptive').imgAdaptive({parentWidth:148,parentHeight:148});
+
     $( 'img:visible' ).imglazyload({
         event : 'scroll',
         fadeIn: true,
@@ -48,15 +56,5 @@ $(function(){
     $( 'img[data-original]' ).not('img:visible').one( 'lazyload', function(){
         $(this).imglazyload({attr : 'data-original'});
     });
-
-    $('.hio-6').find('img.adaptive').imgAdaptive({parentWidth:200,parentHeight:200});
-
-    $('.tv-content').find('img.adaptive').imgAdaptive();
-
-    $('.index-row-3').find('img.adaptive').imgAdaptive();
-
-    $('.index-row-5').find('img.adaptive').imgAdaptive({parentWidth:148,parentHeight:148});
-
-
 
 });

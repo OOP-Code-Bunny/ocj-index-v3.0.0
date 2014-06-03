@@ -132,7 +132,7 @@
 })(jQuery);
 
 /* autoSliderH
- * verson 0.0.1 --04.23
+ * verson 0.0.2 --05.14
  * 横向自动轮播,eg:header部分logo右边的小banner
  * */
 (function($){
@@ -164,6 +164,8 @@
         options.length = options.items.length;
         options.loldIndex = options.lindex-1;
         options.timer = null;
+
+        if(options.items.length == 1) return false;
 
         options.items.each(function() {
             var tindex = $(this).index();
@@ -219,7 +221,7 @@
 })(jQuery);
 
 /* sliderFade
- * verson 0.0.2 --04.28
+ * verson 0.0.4 --05.26
  * 标准轮播(箭头+圆点+渐隐)
  * 1.内容+箭头 (首页楼层里的图片banner)
  * 2.内容+箭头+圆点 (cj special)
@@ -247,7 +249,10 @@
             arrNext: '.g-arr-next',                              //右箭头
             arrPrev: '.g-arr-prev',                              //左箭头
             ifPage: false,                                       //是否显示切换页码
-            pageBox: '.page'                                     //用于放置切换页面的盒子
+            pageBox: '.page',                                    //用于放置切换页面的盒子,
+            ifLoop:true,                                         //是否循环切换
+            leftBorder:null,                                     //第几个的时候不能按左切换
+            rightBorder:null                                     //第几个的时候不能右切换
         };
 
         var options = $.extend(defaultOption, opts);
@@ -274,6 +279,11 @@
 
         if(options.ifPage) {
             options.pageBox.html('<span>1</span>/'+options.MainGifts.length)
+        }
+
+        if(options.MainGifts.length==1) {
+            options.MainGiftArrs.hide();
+            return false
         }
 
         var slider = {};
@@ -303,12 +313,14 @@
 
         options.arrNext.click(function(){
             var indexShow = options.MainGiftIndex==options.length ? 0: options.MainGiftIndex+1;
+            if(indexShow == options.leftBorder && !options.ifLoop) return false;
             slider.MainGiftShow(indexShow);
             options.MainGiftIndex = options.MainGiftIndex==options.length ? 0: options.MainGiftIndex+1;
             return false
         });
         options.arrPrev.click(function(){
             var indexShow = options.MainGiftIndex==0 ? options.length: options.MainGiftIndex-1;
+            if(indexShow == options.rightBorder && !options.ifLoop) return false;
             slider.MainGiftShow(indexShow);
             options.MainGiftIndex = options.MainGiftIndex==0 ? options.length: options.MainGiftIndex-1;
             return false
@@ -325,7 +337,7 @@
 })(jQuery);
 
 /* sliderTpl
- * verson 0.0.1 --04.23
+ * verson 0.0.2 --05.19 (箭头不隐藏+自动播放)
  * 无缝滚动型轮播
  * 1.只有圆点,没有箭头 (楼层展开的logo部分)
  * 2.只有箭头,没有圆点 (首页嗨鸥团子菜单展开)
@@ -364,6 +376,9 @@
             ifBtns:true,                                          //是否使用圆点轮播
             ifCenter:false,                                       //圆点是否居中
             btnWidth:16,                                          //单个圆点的宽度,只有在ifCenter属性为true的时候,这个参数才有意义
+            ifArrAuto:false,                                      //箭头是否一直显示,还是鼠标放上去的时候才显示
+            ifAutoPlay:false,                                     //是否自动播放
+            playTime:6000,                                        //自动播放间隔
             moveTime:800
         };
         var options = $.extend(defaultOption, opts);
@@ -394,6 +409,7 @@
                     options.arrLeft.bind('click',this.showPrev.bind(this))
                 }
                 options.slider.append(a);
+                if(options.ifArrAuto) a.css({'display':'block'})
             }
             return this
         };
@@ -432,6 +448,7 @@
         };
 
         slider.hideArr = function(){
+            if(options.ifArrAuto) return this;
             options.arrLeft.hide();
             options.arrRight.hide()
         };
@@ -479,9 +496,27 @@
             return this
         };
 
+        slider.clearInter = function(){
+            clearInterval(options.autoPlay);
+            options.autoPlay = null;
+            return this
+        };
+
+        slider.setInter = function(){
+            options.autoPlay = setInterval($.proxy(this.showNext,this),options.playTime);
+            return this
+        };
+
+        slider.autoPlay = function(){
+            slider.setInter.call(this);
+            options.slider.bind('mouseenter',this.clearInter.bind(this));
+            options.slider.bind('mouseleave',this.setInter.bind(this));
+        };
+
         slider.init = function(){
             options.ifBtns ? this.addBtns.call(this) : $.noop;
             options.ifArr ? this.ifArrInit.call(this) : $.noop;
+            options.ifAutoPlay ? this.autoPlay.call(this) : $.noop;
         };
 
         slider.ifArrInit = function(){
@@ -583,8 +618,383 @@
     }
 })(jQuery);
 
+/* closeNode
+ * verson 0.0.1 --04.25
+ * 关闭某元素 (顶通banner)
+ * */
+(function ($) {
+    $.fn.closeNode = function (opts) {
+        this.each(function () {
+            init.call(this, opts);
+        });
 
+        return this;
+    };
 
+    function init(opts) {
+        var defaultOption = {
+            closeBtn:'.close',                       //关闭按钮
+            closeContent:null,                       //需要被关闭的内容,如果不定义,就是调用插件的元素本身
+            closeWay:'hide'                          //被关闭的方式,hide,fade,up
+        };
+
+        var options = $.extend(defaultOption, opts);
+        options.closeBtn = $(this).find(options.closeBtn);
+        options.closeContent = options.closeContent ? $(this).find(options.closeContent) : $(this);
+
+        var closeNodeFuns = {};
+
+        closeNodeFuns.close = function(way){
+            switch(way){
+                case 'hide':
+                    this.closeContent.hide();
+                    break;
+                case 'fade':
+                    this.closeContent.fadeOut();
+                    break;
+                case 'up':
+                    this.closeContent.animate({'height':0,'opacity':0},300,'',function(){$(this).hide()});
+                    break;
+                default:
+                    this.closeContent.hide();
+            }
+        };
+
+        options.closeBtn.bind('click', closeNodeFuns.close.bind(options,options.closeWay));
+    }
+})(jQuery);
+
+/* scrollFix
+ * verson 0.0.1 --04.25
+ * 保持某块元素置顶 (公共右侧二维码客服)
+ * */
+(function ($) {
+    $.fn.scrollFix = function (opts) {
+        this.each(function () {
+            init.call(this, opts);
+        });
+
+        return this;
+    };
+
+    function init(opts) {
+        var defaultOption = {
+            ele:$(this),                       //需要被固定的元素
+            extra:0                            //距离该元素多少距离的时候开始定位
+        };
+
+        var options = $.extend(defaultOption, opts);
+
+        options.boundaries = $(this).offset().top;
+
+        var scrollFixFuns = {};
+
+        scrollFixFuns.scroll = function(extra){
+            if($(window).scrollTop()+extra >= this.boundaries){
+                this.ele.addClass('fixed')
+            }
+            else {
+                this.ele.removeClass('fixed')
+            }
+        };
+
+        $(window).bind('scroll',  scrollFixFuns.scroll.bind(options,options.extra));
+    }
+})(jQuery);
+
+/* defValue
+ * verson 0.0.1 --05.05
+ * 文本域默认显示文本 (公共头部搜索条)
+ * */
+(function ($) {
+    $.fn.defValue = function (opts) {
+        this.each(function () {
+            init.call(this, opts);
+        });
+
+        return this;
+    };
+
+    function init(opts) {
+        var defaultOption = {
+            inputText:$(this),
+            changeColor:'#4f5d64',                          //实际输入的内容的颜色
+            originalColor:'#9da6ab',                        //默认文本的颜色
+            ifFocus:false                                   //是否打开的时候就获得焦点
+        };
+
+        var options = $.extend(defaultOption, opts);
+        options.defaultVal = $(this).val();
+
+        var defValueFuns = {};
+
+        defValueFuns.setValue = function(){
+            this.inputText[0].value = this.inputText.val() == options.defaultVal ? '' : this.inputText.val();
+            this.inputText.css({'color':options.changeColor});
+        };
+        defValueFuns.clearValue = function(){
+            this.inputText[0].value = this.inputText.val() == '' ? options.defaultVal : this.inputText.val();
+            this.inputText.css({'color':options.originalColor});
+        };
+
+        $(this).bind('focus',  defValueFuns.setValue.bind(options));
+        $(this).bind('blur',  defValueFuns.clearValue.bind(options));
+
+        if(options.ifFocus){
+            $(this).focus();
+        }
+    }
+})(jQuery);
+
+/* menuAim
+ * verson 0.0.1 --05.05
+ * 左右菜单计算角度显示选项卡
+ * */
+(function ($) {
+
+    $.fn.menuAim = function (opts) {
+        this.each(function () {
+            init.call(this, opts);
+        });
+        return this;
+    };
+
+    function init(opts) {
+        var obj = {
+            menu: $(this),                    //调用此插件的dom对象
+            wholeMenu: $(this),               //整块菜单
+            rowSelector: 'li',                //选项的选择器
+            direct: 'right',                  //子菜单展开在右侧还是左侧
+            extensionRegion: 75,              //上下超出区域的大小
+            active: $.noop,                   //触发某项的函数
+            deActive: $.noop,                 //取消某项的函数
+            leaveMenuHide: true,              //离开菜单是否隐藏所有子菜单
+            activeRow: null,                  //当前显示项(rowSelector中的当前项)
+            delay: 300,                       //延迟时间
+            interTime: 5000,                  //自动切换的间隔时间
+            ifAuto: false,                    //是否自动切换
+            boxCorner: {}                     //记录菜单四个角的位置
+        };
+        var options = $.extend(obj, opts);
+
+        options.wholeMenu = $(options.wholeMenu);
+        options.menuPosition = options.menu.offset();
+        options.boxCorner.leftTop = {x: options.menuPosition.left, y: options.menuPosition.top - options.extensionRegion >= 0 ? options.menuPosition.top - options.extensionRegion : 0};
+        options.boxCorner.leftBottom = {x: options.menuPosition.left, y: options.menuPosition.top + options.menu.height() + options.extensionRegion};
+        options.boxCorner.rightTop = {x: options.menuPosition.left + options.menu.width(), y: options.boxCorner.leftTop.y};
+        options.boxCorner.rightBottom = {x: options.boxCorner.rightTop.x, y: options.boxCorner.leftBottom.y};
+        options.rowSelector = options.menu.find(options.rowSelector);
+        options.length = options.rowSelector.length;
+
+        var menuAim = {};
+        var menuAimAttr = {
+            mouseSite: [],                    //存放鼠标位置(记录3次)
+            timeOut: null,                    //延迟执行的timeout
+            latestLoc: {x: null, y: null},    //记录上一次移动,鼠标的最后的位置
+            ifOut: null,                      //鼠标移动的角度是否真正需要进入另外的菜单
+            interval: null                    //自动切换的interval
+        };
+
+        var menuAimFun = {
+            mouseM: function (e) {
+                this.mouseSite.push({x: e.pageX, y: e.pageY});
+                return this.mouseSite.length > 3 ? this.mouseSite.shift() : $.noop, this
+            },
+            moveEnterRow: function (e) {
+                this.delTimeout.call(this);
+                this.ifEnterNow.apply(this, [$(e.currentTarget)]);
+            },
+            delTimeout: function () {
+                if (this.timeOut) {
+                    clearTimeout(this.timeOut);
+                    this.timeOut = null
+                }
+            },
+            ifEnterNow: function (row) {
+                this.delay = this.delayTime.call(this);
+                if (this.delay) {
+                    this.timeOut = setTimeout(
+                    this.ifEnterNow.bind(this, row)
+                    , this.delay)
+                }
+                else {
+                    this.active.apply(this, [row])
+                }
+            },
+            delayTime: function () {
+                if (!options.activeRow) return 0;
+                var firstLoc = this.mouseSite[0];
+                var lastLoc = this.mouseSite[this.mouseSite.length - 1];
+                if (firstLoc.x < options.boxCorner.leftTop.x || firstLoc.x > options.boxCorner.rightTop.x || firstLoc.y < options.boxCorner.leftTop.y || firstLoc.y > options.boxCorner.leftBottom.y) return 0;
+                if (this.latestLoc.x == lastLoc.x && this.latestLoc.y == lastLoc.y) {
+                    return 0;
+                }
+                switch (options.direct) {
+                    case 'right':
+                        this.ifOut = this.triangleArea.apply(this, [firstLoc, lastLoc, options.boxCorner.rightTop, options.boxCorner.rightBottom]);
+                        break;
+                    case 'left':
+                        this.ifOut = this.triangleArea.apply(this, [firstLoc, lastLoc, options.boxCorner.leftTop, options.boxCorner.leftBottom]);
+                        break;
+                    case 'top':
+                        this.ifOut = this.triangleArea.apply(this, [firstLoc, lastLoc, options.boxCorner.leftTop, options.boxCorner.rightTop]);
+                        break;
+                    case 'bottom':
+                        this.ifOut = this.triangleArea.apply(this, [firstLoc, lastLoc, options.boxCorner.leftBottom, options.boxCorner.rightBottom]);
+                        break;
+                    default:
+                        break;
+                }
+                if (this.ifOut) return 0;
+                if (!this.ifOut) {
+                    this.latestLoc.x = lastLoc.x;
+                    this.latestLoc.y = lastLoc.y;
+                    return options.delay;
+                }
+                else {
+                    return 0
+                }
+            },
+            slope: function (a, b) {
+                return Math.abs((a.y - b.y) / (a.x - b.x))
+            },
+            triangleArea: function (angleMouse_1, angleMouse_2, angle_1, angle_2) {
+                return (this.slope(angleMouse_1, angle_1) < this.slope(angleMouse_2, angle_1) && this.slope(angleMouse_1, angle_2) < this.slope(angleMouse_2, angle_2)) ? 0 : 1;
+            },
+            active: function (row) {
+                this.delTimeout.call(this);
+                if ((row[0] == options.activeRow[0])) return
+
+                options.deActive(options.activeRow);
+                options.active(row);
+                options.activeRow = row
+            },
+            moveLeaveRow: function () {
+                this.delTimeout.call(this);
+            },
+            mouseLeaveMenu: function () {
+                this.delTimeout.call(this);
+                if (options.leaveMenuHide && options.activeRow) {
+                    options.deActive(options.activeRow);
+                    options.activeRow = null
+                }
+                if(options.ifAuto) {
+                    menuAim.interval = setInterval($.proxy(menuAim.activeNext, menuAim),options.interTime);
+                }
+            },
+            nextRow: function(){
+                var indexNow = options.activeRow.index();
+                var indexNext = indexNow == options.length-1 ? 0 : ++indexNow;
+                return options.rowSelector.eq(indexNext);
+            },
+            activeNext: function(){
+                this.delTimeout.call(this);
+                options.deActive(options.activeRow);
+                var rowNext = this.nextRow.call(this);
+                options.active(rowNext);
+                options.activeRow = rowNext
+            },
+            clearInter: function(){
+                clearInterval(this.interval);
+                this.interval = null
+            }
+        };
+
+        $.extend(menuAim, menuAimAttr);
+        $.extend(menuAim, menuAimFun);
+
+        $(document).bind('mousemove', $.proxy(menuAim.mouseM, menuAim));
+        options.rowSelector
+        .bind({
+            'mouseenter': $.proxy(menuAim.moveEnterRow, menuAim),
+            'mouseleave': $.proxy(menuAim.moveLeaveRow, menuAim)
+        });
+        if(options.ifAuto) {
+            menuAim.interval = setInterval($.proxy(menuAim.activeNext, menuAim),options.interTime);
+            options.wholeMenu.bind('mouseenter',$.proxy(menuAim.clearInter, menuAim))
+        }
+        options.wholeMenu.bind('mouseleave', $.proxy(menuAim.mouseLeaveMenu, menuAim));
+
+    }
+})(jQuery);
+
+/* imageMove
+ * verson 0.0.1 --05.26
+ * 图片在框里放大,移动,缩小...(头部tv频道图片)
+ * 可以兼容不同尺寸的图片和框,但是前提是,框的宽必须比高要大或者相等
+ * */
+(function ($,window) {
+    $.fn.imageMove = function (opts) {
+        this.each(function () {
+            init.call(this, opts);
+        });
+
+        return this;
+    };
+
+    function init(opts) {
+        var defaultOption = {
+            parentWidth : 90,                                  //框的宽度
+            parentHeight: 60,                                  //框的高度
+            imgWidth: 160,                                     //图片的宽度
+            imgHeight: 160,                                    //图片的高度
+            speed:3000,                                        //图片运动的速度
+            stop:1000                                          //运动停顿的时间
+        };
+
+        var options = $.extend(defaultOption, opts);
+
+        var ways = {};
+
+        ways.timeOut = null;
+
+        window.imgMoveTimeOut = ways.timeOut;
+
+        ways.stepZero = function(callback){
+            $(this).stop().css({'left':'0','top':'0','width':options.parentWidth+'px','height':options.parentWidth+'px','opacity':'1','filter':'alpha(opacity=100)'});
+            ways.timeOut = setTimeout(callback.bind(this),options.stop)
+        };
+        ways.stepOne = function(){
+            $(this).animate({'left':options.parentWidth-options.imgWidth+'px','width':options.imgWidth+'px','height':options.imgHeight+'px'},options.speed,function(){ways.timeOut = setTimeout(ways.stepsLoop.bind(this),options.stop)})
+        };
+
+        ways.stepTwo = function(callback){
+            $(this).animate({'top':-(options.imgHeight-options.parentHeight-(options.parentWidth-options.parentHeight)/2)+'px'},options.speed,callback.bind(this));
+        };
+
+        ways.stepThree = function(callback){
+            $(this).animate({'left':'0'},options.speed,callback.bind(this));
+        };
+
+        ways.stepFour = function(callback){
+            $(this).animate({'top':-(options.parentWidth-options.parentHeight)/2+'px'},options.speed,callback.bind(this));
+        };
+
+        ways.stepFive= function(callback){
+            $(this).animate({'width':options.parentWidth+'px','height':options.parentWidth+'px'},options.speed,callback.bind(this));
+        };
+
+        ways.stepSix= function(callback){
+            $(this).animate({'width':options.imgWidth+'px','height':options.imgHeight+'px','left':options.parentWidth-options.imgWidth+'px'},options.speed,callback.bind(this));
+        };
+
+        ways.stepsLoop = function(){
+            ways.stepTwo.call(this,function(){
+                ways.timeOut = setTimeout(ways.stepThree.bind(this,function(){
+                    ways.timeOut = setTimeout(ways.stepFour.bind(this,function(){
+                        ways.timeOut = setTimeout(ways.stepFive.bind(this,function(){
+                            ways.timeOut = setTimeout(ways.stepSix.bind(this,function(){
+                                ways.timeOut = setTimeout(ways.stepsLoop.bind(this),options.stop)
+                            }),options.stop)
+                        }),options.stop)
+                    }),options.stop)
+                }),options.stop)
+            })
+        };
+
+        ways.stepZero.call(this,ways.stepOne);
+    }
+})(jQuery,window);
 
 
 

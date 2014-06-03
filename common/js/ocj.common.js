@@ -1,14 +1,5 @@
 
 $(function(){
-    $( 'img:visible' ).imglazyload({
-        event : 'scroll',
-        fadeIn: true,
-        attr : 'data-original'
-    });
-
-    $( 'img[data-original]' ).not('img:visible').one( 'lazyload', function(){
-        $(this).imglazyload({attr : 'data-original'});
-    });
 
     $('.g-header-tv-table').find('img.adaptive').imgAdaptive({parentWidth:60,parentHeight:60});
 
@@ -54,9 +45,6 @@ $(function(){
         else {
             allCatalogTab.find('b').addClass('icon-arrow-down9').removeClass('icon-arrow-up8')
         }
-        return false
-    });
-    gHeaderMenu.delegate('.g-all-catalog','click',function(e){
         return false
     });
     $('body').bind('click',function(){
@@ -174,4 +162,82 @@ $(function(){
     var sideBar = $('.g-side-bar').scrollFix({extra:10});
 
     var inputTexts = $(':text').defValue();
+
+    var gSearchBar = $('.g-search-box').find('.search-bar').find('input');
+    var gSearchBarRelation = $('.g-search-box').find('.relation-search');
+    var gSearchBarObj = {
+        ifHide : true
+    };
+
+    gSearchBar.bind('focus',function(){
+        if($(this).val()){
+            //显示关联搜索,此时加载数据
+            gSearchBarRelation.show();
+            gSearchRelations();
+        }
+        else {
+            gSearchBarRelation.hide();
+        }
+    });
+
+    gSearchBar.bind('keydown',function(){
+        setTimeout(function(){
+            if(gSearchBar.val()){
+                //显示关联搜索,根据输入内容重新加载数据
+                gSearchBarRelation.show();
+                gSearchRelations();
+            }
+            else {
+                gSearchBarRelation.hide();
+            }
+        },0);
+    });
+
+    gSearchBarRelation.bind('mousedown',function(e){
+        gSearchBarObj.ifHide = false;
+    });
+
+    gSearchBarRelation.bind('mouseup',function(e){
+        gSearchBarObj.ifHide = true;
+        gSearchBar.focus();
+    });
+
+    gSearchBar.bind('blur',function(e){
+        if(gSearchBarObj.ifHide){
+            gSearchBarRelation.hide()
+        }
+    });
+
+    var gSearchRelations = function(){
+        var searchLeftMenu = $('.fl-keywords');
+        var searchLeftMenuContent = $('.fr-relation');
+
+        searchLeftMenuContent.find('.relation-content').eq(0).triggerLazyImg();
+        searchLeftMenuContent.find('img.adaptive').imgAdaptive({parentWidth:160,parentHeight:55});
+
+        searchLeftMenu.menuAim({
+            active:searActivate,
+            deActive:searDeactivate,
+            activeRow:searchLeftMenu.find('li').eq(0),
+            leaveMenuHide:false,
+            extensionRegion:10,
+            wholeMenu:'.relation-search'
+        });
+        function searActivate(row){
+            if($(row).hasClass('no')){
+                searchLeftMenu.find('li').css({'width':'488'})
+            }
+            else {
+                searchLeftMenu.find('li').css({'width':'208'})
+            }
+            $(row).addClass('cur');
+            var menuId = $(row).attr('data-menu');
+            var menu = searchLeftMenuContent.find('#'+menuId).show().triggerLazyImg()
+        }
+        function searDeactivate(row){
+            $(row).removeClass('cur');
+            var menuId = $(row).attr('data-menu');
+            var menu = searchLeftMenuContent.find('#'+menuId).hide();
+        }
+    };
 });
