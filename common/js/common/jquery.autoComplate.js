@@ -1,3 +1,7 @@
+/*create by code_bunny 20140701
+  973295131@qq.com
+  https://github.com/OOP-Code-Bunny
+*/
 (function ($) {
     $.fn.autoComplate = function (opts) {
         this.each(function () {
@@ -29,7 +33,7 @@
                 aLi.bind('mousedown',func.chooseLi.bind(options));
             }
             this.emailBox.append(this.aUl);
-            this.textInput.bind('focus',func.bindFocus.bind(this)).bind('blur',func.textBlur.bind(this));
+            this.textInput.bind('keydown',func.keyDownFun.bind(this)).bind('keyup',func.keyUpFun.bind(this)).bind('blur',func.textBlur.bind(this));
             return this;
         };
 
@@ -107,7 +111,6 @@
             func.clearTO.call(this);
             this.cur = null;
             func.removeCur.call(this);
-            this.textInput.unbind('keyup');
             this.emailBox.hide();
             return this
         };
